@@ -1,0 +1,42 @@
+(defcfg
+  concurrent-tap-hold yes
+  process-unmapped-keys yes
+  sequence-timeout 150
+)
+
+(defalias
+  q_alt (multi alt (layer-while-held qwerty))
+  q_ctl (multi ctl (layer-while-held qwerty))
+  q_met (multi met (layer-while-held qwerty))
+  caps  (tap-hold 200 150 esc (multi lctl (layer-while-held qwerty)))
+)
+
+(defsrc
+  esc  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft up
+  lctl lmet lalt           spc            ralt  left down rght
+)
+
+(deflayer colemak-dh
+  `  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    f    p    b    j    l    u    y    ;    [    ]    \
+  @caps a    r    s    t    g    m    n    e    i    o    '    ret
+  lsft x    c    d    v    z    k    h    ,    .    /    rsft up
+  @q_ctl @q_met @q_alt           spc            ralt  left down rght
+)
+
+(deflayer qwerty
+  `  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft up
+  lctl lmet lalt           spc            ralt  left down rght
+)
+
+(defchordsv2
+  (w e) esc 50 all-released ()
+  ([ ]) (layer-switch qwerty) 50 all-released (qwerty)
+  (; ') (layer-switch colemak-dh) 50 all-released (colemak-dh)
+)
