@@ -78,4 +78,4 @@ working_directory = "None"
 
 [terminal]
 osc52 = "CopyPaste"
-shell = { program = "~/scripts/tmux/tmux.sh" }
+shell = { program = "/home/xploit/scripts/tmux/tmux.sh" }
