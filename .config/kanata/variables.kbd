@@ -1,0 +1,10 @@
+(defvar
+  tap-time 200
+  hold-time 200
+
+  hold-index 150
+  hold-middle 150
+  hold-ring 170
+  hold-pinky 195
+  hold-thumb 170
+)

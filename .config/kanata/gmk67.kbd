@@ -4,7 +4,30 @@
   sequence-timeout 150
 )
 
+(include variables.kbd)
+
+;; Define a virtual key to track "mod mode"
+(defvirtualkeys
+  mod-mode nop0  ;; No-op key that helps track when we're using mod combinations
+)
+
+(deffakekeys
+  to-base (layer-switch colemak-dh)
+)
+
 (defalias
+  ;; Press mod-mode key when any modifier is pressed
+  enable-mod-mode (on-press press-virtualkey mod-mode)
+
+  ;; Disable mod mode when all modifiers are released
+  disable-mod-mode (on-release release-virtualkey mod-mode)
+
+  ;; Basic tap action that switches to nomods layer
+  tap-action (multi
+    (layer-switch nomods)
+    (on-idle-fakekey to-base tap 50)
+  )
+
   q_alt (multi alt (layer-while-held qwerty))
   q_ctl (multi ctl (layer-while-held qwerty))
   q_met (multi met (layer-while-held qwerty))
@@ -22,10 +45,19 @@
 (deflayer colemak-dh
   `  1    2    3    4    5    6    7    8    9    0    -    =    bspc
   tab  q    w    f    p    b    j    l    u    y    ;    [    ]    \
-  @caps a    r    s    t    g    m    n    e    i    o    '    ret
+  @caps @ah    @rh    @sh    @th    g    m    @nh    @eh    @ih    @oh    '    ret
   lsft x    c    d    v    z    k    h    ,    .    /    rsft up
   @q_ctl @q_met @q_alt           spc            ralt  left down rght
 )
+
+(deflayer nomods
+  `  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    f    p    b    j    l    u    y    ;    [    ]    \
+  caps a    r    s    t    g    m    n    e    i    o    '    ret
+  lsft x    c    d    v    z    k    h    ,    .    /    rsft up
+  lctl lmet lalt           spc            ralt  left down rght
+)
+
 
 (deflayer qwerty
   `  1    2    3    4    5    6    7    8    9    0    -    =    bspc
@@ -40,3 +72,40 @@
   ([ ]) (layer-switch qwerty) 50 all-released (qwerty)
   (; ') (layer-switch colemak-dh) 50 all-released (colemak-dh)
 )
+
+(deftemplate home-row-mod (tap-key hold-mod hold-time alias-name-safe)
+  (defalias
+  ;; Fixed implementation allows mod combinations
+      $alias-name-safe (multi
+      ;; Track modifier state
+      @enable-mod-mode
+      @disable-mod-mode
+
+      ;; Main tap-hold logic with behavior that changes based on other mods
+      (tap-hold-except-keys $tap-time $hold-time
+        ;; For tap action, check if we're in mod mode
+        (switch
+          ;; If mod-mode is active (other mods pressed), just output the key
+          ((input virtual mod-mode)) $tap-key break
+
+          ;; Otherwise, activate the tap action with layer switch
+          () (multi $tap-key @tap-action) break
+        )
+        ;; Hold action is always the modifier
+        $hold-mod
+        ;; Keys that always trigger tap
+        (lctl rctl lalt ralt lsft rsft lmet rmet)
+      )
+    )
+  )
+)
+
+(deftemplate home-row-hand (pinky-key ring-key middle-key index-key)
+    (template-expand home-row-mod $pinky-key @q_ctl $hold-pinky (concat $pinky-key h))
+    (template-expand home-row-mod $ring-key @q_alt $hold-ring (concat $ring-key h))
+    (template-expand home-row-mod $middle-key @q_met $hold-middle (concat $middle-key h))
+    (template-expand home-row-mod $index-key lsft $hold-index (concat $index-key h))
+)
+
+(template-expand home-row-hand a r s t)
+(template-expand home-row-hand o i e n)
