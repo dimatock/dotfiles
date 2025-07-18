@@ -31,7 +31,7 @@
   q_alt (multi alt (layer-while-held qwerty))
   q_ctl (multi ctl (layer-while-held qwerty))
   q_met (multi met (layer-while-held qwerty))
-  caps  (tap-hold 200 150 esc (multi lctl (layer-while-held qwerty)))
+  caps  (tap-hold 200 150 (multi lctl spc) (multi lctl lalt lmet (layer-while-held qwerty)))
 )
 
 (defsrc
