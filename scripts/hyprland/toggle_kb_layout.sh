@@ -1,3 +1,8 @@
 #!/bin/bash
+DEFAULT_LAYOUT="us"
+if [ -z "$1" ]; then
+  hyprctl keyword input:kb_layout "$DEFAULT_LAYOUT"
+else
+  hyprctl keyword input:kb_layout "$1"
+fi
 
-hyprctl keyword input:kb_layout $(hyprctl getoption input:kb_layout -j | jq -r '.str' | awk '{if ($1=="us,") print "ru"; else print "us,"}')
