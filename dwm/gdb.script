@@ -1,0 +1,7 @@
+set logging file /home/xploit/gdb-chadwm.log
+set logging on
+set pagination off
+set confirm off
+run
+bt
+quit

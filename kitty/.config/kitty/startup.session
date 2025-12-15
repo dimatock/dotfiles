@@ -1,0 +1,7 @@
+new_tab git
+layout splits
+cd ~/
+launch --location=vsplit --var window=code --bias=60 
+launch --location=vsplit 
+focus_matching_window var:window=code
+
